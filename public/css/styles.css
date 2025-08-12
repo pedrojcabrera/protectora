@@ -1,0 +1,111 @@
+* {
+	/* font-size: clamp(0.75rem, 1.5vw, 1.25rem); */
+	font-size: 16px;
+	/* Tamaño de fuente base */
+	box-sizing: border-box;
+	/* Asegura que el padding y border se incluyan en el ancho total */
+}
+
+body {
+	font-family: "Segoe UI", sans-serif;
+}
+
+.layout {
+	max-width: 1400px;
+	/* Ancho máximo del contenido */
+	margin: 0 auto;
+	/* Centrar el contenido */
+}
+
+#protectora {
+	color: white;
+}
+
+#user {
+	font-size: 0.75rem;
+}
+
+.logo-container {
+	text-align: center;
+	margin-bottom: 20px;
+	/* Espacio debajo del logo */
+	max-width: 250px;
+}
+
+.validation-errors ul li {
+	list-style-type: none;
+	padding-left: 0;
+}
+
+a.nav-link {
+	color: #333;
+	line-height: 1.5ch;
+
+	&:hover {
+		background-color: silver;
+		font-weight: 400;
+	}
+}
+
+/* Sidebar fijo en escritorio */
+@media (min-width: 992px) {
+	#sidebar {
+		position: fixed;
+		top: 56px;
+		bottom: 0;
+		left: 0;
+		max-width: 250px;
+		z-index: 1030;
+		display: block !important;
+		transform: none !important;
+		visibility: visible !important;
+	}
+
+	.offcanvas-backdrop {
+		display: none !important;
+	}
+
+	body {
+		padding-left: 250px;
+	}
+
+	.offcanvas-header.d-lg-none {
+		display: none !important;
+	}
+
+	/* #user {
+		display: block;
+	} */
+}
+
+.offcanvas {
+	max-width: 250px;
+}
+
+/*   leaflet (mapas)   */
+
+.leaflet-container {
+	height: 100vh;
+	/* Altura completa de la ventana */
+	width: 100%;
+	/* Ancho completo */
+}
+
+.leaflet-tooltip {
+	font-size: 0.8rem;
+	/* Cambia el tamaño que quieras */
+	font-weight: bold;
+}
+
+.leaflet-popup-content {
+	font-size: 0.8rem;
+	/* el tamaño que quieras */
+	/* font-weight: lighter; */
+}
+
+/* Otros tags */
+
+select option {
+	font-size: 0.9rem;
+	/* Cambia el tamaño que quieras */
+}
