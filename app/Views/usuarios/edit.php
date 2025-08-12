@@ -25,6 +25,7 @@ Inicio
 		<form class="text-start" action="<?= site_url('usuarios/update') ?>" method="post">
 			<?= csrf_field() ?>
 
+			<input type="hidden" name="_method" value="PUT">
 			<input type="hidden" name="id" value="<?= $usuario->id ?>">
 
 			<div class="mb-3">
@@ -49,7 +50,7 @@ Inicio
 				<?php $estadoSeleccionado = old('estado') ?? $usuario->estado ?? ''; ?>
 				<label for="estado" class="fs-6 fw-mute fw-light fst-italic"><small>Estado</small></label>
 				<select name="estado" id="estado" class="form-select" required
-					<?= session('nivel') === 'user' ? 'readonly' : '' ?>>
+					<?= session('nivel') === 'user' ? 'disabled' : '' ?>>
 					<option value="">-- Selecciona estado --</option>
 					<option value="activo" <?= $estadoSeleccionado === 'activo' ? 'selected' : '' ?>>Activo</option>
 					<option value="inactivo" <?= $estadoSeleccionado === 'inactivo' ? 'selected' : '' ?>>Inactivo
@@ -61,7 +62,7 @@ Inicio
 				<?php $nivelSeleccionado = old('nivel') ?? $usuario->nivel ?? ''; ?>
 				<label for="nivel" class="fs-6 fw-mute fw-light fst-italic"><small>Nivel</small></label>
 				<select name="nivel" id="nivel" class="form-select" required
-					<?= session('nivel') != 'super' ? 'readonly' : '' ?>>
+					<?= session('nivel') != 'super' ? 'disabled' : '' ?>>
 					<option value="">-- Selecciona nivel --</option>
 					<option value="user" <?= $nivelSeleccionado === 'user' ? 'selected' : '' ?>>Usuario</option>
 					<option value="admin" <?= $nivelSeleccionado === 'admin' ? 'selected' : '' ?>>Administrador

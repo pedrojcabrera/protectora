@@ -20,6 +20,7 @@ Inicio
 
 <form class="text-start" action="<?= site_url('socios/update') ?>" method="post" enctype="multipart/form-data">
 	<?= csrf_field() ?>
+
 	<input type="hidden" name="_method" value="PUT">
 	<input type="hidden" name="id" value="<?= $socio->id ?? '' ?>">
 

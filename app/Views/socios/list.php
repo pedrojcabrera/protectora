@@ -44,7 +44,7 @@ Inicio
 			</div>
 		</div>
 		<?php endforeach; ?>
-		<hr>
+		<br>
 		<caption><?= count($socios) ?> socios</caption>
 	</div>
 </div>

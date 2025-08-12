@@ -19,6 +19,7 @@ Inicio
 		<form class="text-start" action="<?= site_url('razas/update') ?>" method="post">
 			<?= csrf_field() ?>
 
+			<input type="hidden" name="_method" value="PUT">
 			<input type="hidden" name="id" value="<?= $raza->id ?>">
 
 			<div class="mb-3">

@@ -21,6 +21,7 @@ Inicio
 			</div>
 			<?php endif; ?>
 
+			<input type="hidden" name="_method" value="PUT">
 			<input type="hidden" name="id" value="<?= $animal->id ?>">
 
 			<div class="row mb-3">

@@ -19,6 +19,7 @@ Inicio
 		<form class="text-start" action="<?= site_url('colonias/update') ?>" method="post">
 			<?= csrf_field() ?>
 
+			<input type="hidden" name="_method" value="PUT">
 			<input type="hidden" name="id" value="<?= $colonia->id ?>">
 
 			<div class="row col-12">
