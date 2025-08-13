@@ -35,6 +35,7 @@ class LoginController extends BaseController
         }
         return view('login');
     }
+    
     public function acceso()
     {
         $rules = [

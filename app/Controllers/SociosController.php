@@ -20,7 +20,7 @@ class SociosController extends BaseController
     {
         $this->sociosModel = new SociosModel();
         $this->modalidadPago = ['anual' => 'Anual (1 pago al año)', 'semestral' => 'Semestral (2 pagos al año)', 'cuatrimestral' => 'Cuatrimestral (3 pagos al año)' , 'trimestral' => 'Trimestral (4 pagos al año)', 'mensual' => 'Mensual (12 pagos al año)'];
-        $this->tipos = ['sociocon' => 'Socio de Cuota', 'sociosin' => 'Socio sin Cuota', 'colaborador' => 'Colaborador', 'amigo' => 'Amigo'];
+        $this->tipos = ['socio' => 'Socio', 'colaborador' => 'Colaborador'];
     }
     
     public function list()
@@ -41,7 +41,7 @@ class SociosController extends BaseController
             'nombre'           => "required|min_length[3]|max_length[100]",
             'telefono'         => "permit_empty|regex_match[/^[0-9]{9}$/]",
             'email'            => "permit_empty|valid_email|is_unique[socios.email]|max_length[150]",
-            'tipo'             => "required|in_list[sociocon,sociosin,colaborador,amigo]",
+            'tipo'             => "required|in_list[socio,colaborador]",
             'direccion'        => "required",
             'codpostal'        => "required|regex_match[/^[0-9]{5}$/]",
             'poblacion'        => "required",
@@ -176,7 +176,7 @@ class SociosController extends BaseController
             'nombre'           => "required|min_length[3]|max_length[100]",
             'telefono'         => "permit_empty|regex_match[/^[0-9]{9}$/]",
             'email'            => "permit_empty|valid_email|is_unique[socios.email,id,{$id}]|max_length[150]",
-            'tipo'             => "required|in_list[sociocon,sociosin,colaborador,amigo]",
+            'tipo'             => "required|in_list[socio,colaborador]",
             'direccion'        => "required",
             'codpostal'        => "required|regex_match[/^[0-9]{5}$/]",
             'poblacion'        => "required",
@@ -265,7 +265,6 @@ class SociosController extends BaseController
 
         return redirect()->to(site_url('socios'))->with('success', 'Socio actualizado correctamente.');
     }
-
 
     public function delete()
     {

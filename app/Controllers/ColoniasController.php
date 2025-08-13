@@ -101,7 +101,7 @@ class ColoniasController extends BaseController
 
             $lat  = false;
             $lng = false;
-    }
+        }
         
         return view('colonias/show', ['colonia' => $colonia, 'lat' => $lat, 'lng' => $lng]);
     }
