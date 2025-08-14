@@ -43,8 +43,9 @@ Inicio
 			</div>
 		</div>
 		<?php endforeach; ?>
-		<hr>
-		<caption><?= count($jaulas) ?> elemento<?= (count($jaulas) > 1 )? 's' : '' ?></caption>
+		<div class="mt-3">
+			<caption><?= count($jaulas) ?> elemento<?= (count($jaulas) > 1 )? 's' : '' ?></caption>
+		</div>
 	</div>
 </div>
 

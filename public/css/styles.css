@@ -109,3 +109,16 @@ select option {
 	font-size: 0.9rem;
 	/* Cambia el tamaño que quieras */
 }
+
+.botonera-fija {
+	position: sticky;
+	bottom: 0;
+	/* siempre pegado al fondo de la pantalla */
+	background: white;
+	/* para que no se mezclen elementos detrás */
+	padding: 0.5rem 0;
+	/* un poco de espacio */
+	border-top: 1px solid #ddd;
+	z-index: 1000;
+	/* que esté por encima de otros elementos */
+}

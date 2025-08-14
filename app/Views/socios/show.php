@@ -192,7 +192,7 @@ Inicio
 
 <?php endif; ?>
 
-<div class="mt-3">
+<div class="mt-3 botonera-fija">
 	<a href="<?= site_url('socios') ?>" class="btn btn-sm btn-info bi-person-lines-fill"> Volver al
 		listado</a>
 </div>

@@ -53,9 +53,10 @@ Agregar Veterinario
 				<textarea name="observaciones" id="observaciones" class="form-control"
 					rows="3"><?= old('observaciones') ?></textarea>
 			</div>
-			<hr>
-			<button type="submit" class="btn btn-sm btn-success bi-floppy"> Guardar</button>
-			<a href="<?= site_url('veterinarios') ?>" class="btn btn-sm btn-info bi-box-arrow-left"> Cancelar</a>
+			<div class="mt-3 botonera-fija">
+				<button type="submit" class="btn btn-sm btn-success bi-floppy"> Guardar</button>
+				<a href="<?= site_url('veterinarios') ?>" class="btn btn-sm btn-info bi-box-arrow-left"> Cancelar</a>
+			</div>
 		</form>
 	</div>
 </div>

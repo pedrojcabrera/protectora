@@ -41,8 +41,9 @@ Inicio
 			</div>
 		</div>
 		<?php endforeach; ?>
-		<hr>
-		<caption><?= count($razas) ?> razas</caption>
+		<div class="mt-3">
+			<caption><?= count($razas) ?> razas</caption>
+		</div>
 	</div>
 </div>
 <?= $this->endSection() ?>

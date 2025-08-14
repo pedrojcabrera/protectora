@@ -47,8 +47,9 @@ Inicio
 			</div>
 		</div>
 		<?php endforeach; ?>
-		<hr>
-		<caption><?= count($colonias) ?> colonias</caption>
+		<div class="mt-3">
+			<caption><?= count($colonias) ?> colonias</caption>
+		</div>
 	</div>
 </div>
 <?= $this->endSection() ?>

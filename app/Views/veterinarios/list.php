@@ -43,8 +43,9 @@ Inicio
 			</div>
 		</div>
 		<?php endforeach; ?>
-		<hr>
-		<caption><?= count($veterinarios) ?> veterinarios</caption>
+		<div class="mt-3">
+			<caption><?= count($veterinarios) ?> veterinarios</caption>
+		</div>
 	</div>
 </div>
 

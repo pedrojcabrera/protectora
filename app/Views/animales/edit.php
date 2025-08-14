@@ -338,9 +338,10 @@ Inicio
 						rows="3"><?= old('descripcion_larga') ?? esc($animal->descripcion_larga ?? '') ?></textarea>
 				</div>
 			</div>
-			<hr>
-			<button type="submit" class="btn btn-sm btn-success bi-floppy"> Guardar</button>
-			<a href="<?= site_url('animales') ?>" class="btn btn-sm btn-info bi-box-arrow-left"> Volver</a>
+			<div class="mt-3 botonera-fija">
+				<button type="submit" class="btn btn-sm btn-success bi-floppy"> Guardar</button>
+				<a href="<?= site_url('animales') ?>" class="btn btn-sm btn-info bi-box-arrow-left"> Volver</a>
+			</div>
 		</div>
 	</form>
 </div>

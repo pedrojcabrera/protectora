@@ -303,9 +303,12 @@ Inicio
 					</div>
 				</div>
 			</div>
-			<button type="submit" class="btn btn-sm btn-success bi-floppy"> Guardar</button>
-			<a href="<?= base_url('animales') ?>" class="btn btn-sm btn-info bi-box-arrow-left">
-				Volver</a>
+			<div class="mt-3 botonera-fija">
+				<!-- Botones de acción -->
+				<button type="submit" class="btn btn-sm btn-success bi-floppy"> Guardar</button>
+				<a href="<?= base_url('animales') ?>" class="btn btn-sm btn-info bi-box-arrow-left">
+					Volver</a>
+			</div>
 		</form>
 	</div>
 </div>

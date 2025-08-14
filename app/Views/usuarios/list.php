@@ -43,8 +43,9 @@ Inicio
 			<?php endif ?>
 		</div>
 		<?php endforeach; ?>
-		<hr>
-		<caption><?= count($usuarios) ?> usuarios</caption>
+		<div class="mt-3">
+			<caption><?= count($usuarios) ?> usuarios</caption>
+		</div>
 	</div>
 </div>
 <?= $this->endSection() ?>

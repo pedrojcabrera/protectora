@@ -152,8 +152,9 @@ Inicio
 			</div>
 
 			<div>
-				<label for="cuenta_bancaria" class="fs-6 fw-mute fw-light fst-italic"><small>Número de
-						Cuenta Bancaria</small></label>
+				<label for="cuenta_bancaria" class="fs-6 fw-mute fw-light fst-italic">
+					<small>Número de Cuenta Bancaria</small>
+				</label>
 				<input type="text" name="cuenta_bancaria" id="cuenta_bancaria" class="form-control"
 					pattern="[A-Z]{2}[0-9]{2} [0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}" maxlength="29"
 					placeholder="ES00 0000 0000 0000 0000 0000" value="<?= old('cuenta_bancaria') ?>">
@@ -186,7 +187,7 @@ Inicio
 
 		</div>
 	</div>
-	<div class="mt-3">
+	<div class="mt-3 botonera-fija">
 		<button type="submit" class="btn btn-sm btn-success bi-floppy"> Guardar</button>
 		<a href="<?= site_url('socios') ?>" class="btn btn-sm btn-info bi-box-arrow-left"> Volver</a>
 	</div>
@@ -239,5 +240,63 @@ function cancelarSeleccion(inputId, previewId, btnCancelarId, checkboxBorrarId) 
 
 	if (btnCancelar) btnCancelar.style.display = 'none';
 }
+</script>
+<script>
+(function() {
+	const input = document.getElementById('cuenta_bancaria');
+
+	function formatIBAN(value) {
+		// Mayúsculas y solo A-Z/0-9
+		let raw = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+		// Solo dígitos a partir del 5º carácter (después de ES00)
+		raw = raw.slice(0, 4) + raw.slice(4).replace(/\D/g, '');
+		// Espacio cada 4 caracteres (ES00 0000 0000 0000 0000 0000)
+		const groups = raw.match(/.{1,4}/g) || [];
+		return groups.join(' ');
+	}
+
+	// Mantener la posición del cursor al re-formatear
+	function setCaretByNonSpaces(el, nonSpaceCount) {
+		const v = el.value;
+		let count = 0,
+			pos = v.length;
+		for (let i = 0; i < v.length; i++) {
+			if (v[i] !== ' ') {
+				count++;
+				if (count === nonSpaceCount) {
+					pos = i + 1;
+					break;
+				}
+			}
+		}
+		el.setSelectionRange(pos, pos);
+	}
+
+	function onInput(e) {
+		const el = e.target;
+		const oldVal = el.value;
+		const caretNonSpaces = oldVal.slice(0, el.selectionStart).replace(/ /g, '').length;
+
+		el.value = formatIBAN(oldVal);
+		setCaretByNonSpaces(el, caretNonSpaces);
+	}
+
+	function onPaste(e) {
+		e.preventDefault();
+		const text = (e.clipboardData || window.clipboardData).getData('text');
+		const start = input.selectionStart;
+		const end = input.selectionEnd;
+		const before = input.value.slice(0, start);
+		const after = input.value.slice(end);
+		const merged = before + text + after;
+		input.value = formatIBAN(merged);
+		// Colocar el cursor tras lo pegado (contando sin espacios)
+		const nonSpaces = (before + text).replace(/[^A-Z0-9]/g, '').length;
+		setCaretByNonSpaces(input, nonSpaces);
+	}
+
+	input.addEventListener('input', onInput);
+	input.addEventListener('paste', onPaste);
+})();
 </script>
 <?= $this->endSection() ?>

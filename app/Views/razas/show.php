@@ -41,9 +41,10 @@ Inicio
 				?>
 			</div>
 		</div>
-
-		<a href="<?= site_url('razas') ?>" class="btn btn-sm btn-info bi-person-lines-fill"> Volver al
-			listado</a>
+		<div class="mt-3">
+			<a href="<?= site_url('razas') ?>" class="btn btn-sm btn-info bi-person-lines-fill"> Volver al
+				listado</a>
+		</div>
 	</div>
 </div>
 <?= $this->endSection() ?>

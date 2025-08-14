@@ -32,10 +32,10 @@ Inicio
 					class="form-control"><?= old('observaciones') ?></textarea>
 			</div>
 
-			<hr>
-			<button type="submit" class="btn btn-sm btn-success bi-floppy"> Guardar</button>
-			<a href="<?= site_url('especies') ?>" class="btn btn-sm btn-info bi-box-arrow-left"> Volver</a>
-
+			<div class="mt-3 botonera-fija">
+				<button type="submit" class="btn btn-sm btn-success bi-floppy"> Guardar</button>
+				<a href="<?= site_url('especies') ?>" class="btn btn-sm btn-info bi-box-arrow-left"> Volver</a>
+			</div>
 		</form>
 	</div>
 </div>

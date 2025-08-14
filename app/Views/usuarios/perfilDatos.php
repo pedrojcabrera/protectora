@@ -44,9 +44,10 @@ Inicio
 				<input type="email" class="form-control" name="email" id="email"
 					value="<?= old('email', $usuario->email) ?>">
 			</div>
-			<hr>
-			<button type="submit" class="btn btn-sm btn-success bi-hand-thumbs-up"> Actualizar</button>
-			<a href="<?= site_url('/') ?>" class="btn btn-sm btn-secondary bi-box-arrow-left"> Cancelar</a>
+			<div class="mt-3 botonera-fija">
+				<button type="submit" class="btn btn-sm btn-success bi-hand-thumbs-up"> Actualizar</button>
+				<a href="<?= site_url('/') ?>" class="btn btn-sm btn-secondary bi-box-arrow-left"> Cancelar</a>
+			</div>
 		</form>
 	</div>
 </div>

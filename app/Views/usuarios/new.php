@@ -54,9 +54,10 @@ Agregar Usuario
 					<?= old('nivel') === 'admin' ? 'checked' : '' ?>>
 			</div>
 
-			<hr>
-			<button type="submit" class="btn btn-sm btn-success bi-floppy"> Guardar</button>
-			<a href="<?= site_url('usuarios') ?>" class="btn btn-sm btn-info bi-box-arrow-left"> Volver</a>
+			<div class="mt-3 botonera-fija">
+				<button type="submit" class="btn btn-sm btn-success bi-floppy"> Guardar</button>
+				<a href="<?= site_url('usuarios') ?>" class="btn btn-sm btn-info bi-box-arrow-left"> Volver</a>
+			</div>
 
 		</form>
 	</div>

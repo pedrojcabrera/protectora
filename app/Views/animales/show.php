@@ -151,7 +151,8 @@ Inicio
 		<?php endif ?>
 	</div>
 </div>
-
-<a href="<?= site_url('animales') ?>" class="mt-3 btn btn-sm btn-info bi-person-lines-fill"> Volver al
-	listado</a>
+<div class="mt-3 botonera-fija">
+	<a href="<?= site_url('animales') ?>" class="mt-3 btn btn-sm btn-info bi-person-lines-fill"> Volver al
+		listado</a>
+</div>
 <?= $this->endSection() ?>

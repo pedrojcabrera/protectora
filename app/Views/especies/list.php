@@ -39,8 +39,8 @@ Inicio
 			</div>
 		</div>
 		<?php endforeach; ?>
-		<hr>
-		<caption><?= count($especies) ?> especies</caption>
+		<div class="mt-3">
+			<caption><?= count($especies) ?> especies</caption>
+		</div>
 	</div>
-</div>
-<?= $this->endSection() ?>
+	<?= $this->endSection() ?>

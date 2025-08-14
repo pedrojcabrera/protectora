@@ -65,18 +65,14 @@ Inicio
 								data-bs-dismiss="modal" aria-label="Cerrar">
 								<i class="bi bi-x-lg text-white fs-4"></i>
 							</button>
-
 						</div>
-
 					</div>
 				</div>
 			</div>
 		</div>
-
-
-
-		<hr>
-		<caption><?= count($animales) ?> animales</caption>
+		<div class="mt-3">
+			<caption><?= count($animales) ?> animales</caption>
+		</div>
 	</div>
 </div>
 <?= $this->endSection() ?>
