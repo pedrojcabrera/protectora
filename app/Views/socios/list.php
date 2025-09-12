@@ -6,7 +6,7 @@ Inicio
 
 <?= $this->section('content') ?>
 
-<h1 class="mb-4">Lista de Socios</h1>
+<h1 class="mb-4">Lista de Socios y Colaboradores</h1>
 
 <div class="card">
 	<div class="card-body text-center">
@@ -16,7 +16,8 @@ Inicio
 		<hr>
 		<!-- Cabecera -->
 		<div class="row text-start fw-bold border-bottom py-2">
-			<div class="col-4">Nombre</div>
+			<div class="col-1">Tipo</div>
+			<div class="col-3">Nombre</div>
 			<div class="col-4">Email</div>
 			<div class="col-2">Teléfono</div>
 			<div class="col-2 text-center">Acciones</div>
@@ -24,9 +25,10 @@ Inicio
 		<!-- Datos -->
 		<?php foreach($socios as $socio): ?>
 		<div class="row text-start border-bottom py-2 align-items-center">
-			<div class="col-4"><?= esc($socio->nombre) ?></div>
+			<div class="col-1"><small><?= ucfirst(mb_substr(esc($socio->tipo), 0,5)) ?></small></div>
+			<div class="col-3"><?= esc($socio->nombre) ?></div>
 			<div class="col-4"><?= esc($socio->email) ?></div>
-			<div class="col-2"><?= esc($socio->telefono) ?></div></small>
+			<div class="col-2"><small><?= esc($socio->telefono) ?></small></div>
 			<div class="col-2 d-flex justify-content-center gap-1 text-right">
 				<a href="<?= site_url('socios/show/' . $socio->id) ?>"
 					class="d-inline btn btn-sm btn-success bi-person-vcard" title="Ver "></a>

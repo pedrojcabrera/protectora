@@ -75,7 +75,7 @@ Inicio
 			</div>
 		</div>
 
-		<div class="d-grid mb-3" style="grid-template-columns: 1fr 2fr 2fr; gap: 1ch;">
+		<div class="d-grid mb-3" style="grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1ch;">
 			<div>
 				<label for="tipo_documentoId" class="fs-6 fw-mute fw-light fst-italic"><small>Tipo de
 						documento</small></label>
@@ -99,9 +99,15 @@ Inicio
 				<input type="date" name="fecha_nacimiento" id="fecha_nacimiento" class="form-control"
 					style="font-size: .9rem;" value="<?= old('fecha_nacimiento', $socio->fecha_nacimiento ?? '') ?>">
 			</div>
+			<div>
+				<label for="fecha_alta" class="fs-6 fw-mute fw-light fst-italic"><small>Fecha de
+						Alta</small></label>
+				<input type="date" name="fecha_alta" id="fecha_alta" class="form-control" style="font-size: .9rem;"
+					value="<?= old('fecha_alta', $socio->fecha_alta ?? '') ?>">
+			</div>
 		</div>
 
-		<div class="d-grid mb-3" style="grid-template-columns: 1fr 1fr 1fr; gap: 1ch;">
+		<div class="d-grid mb-3" style="grid-template-columns: 2fr 2fr 1fr 1fr; gap: 1ch;">
 			<!-- FOTO DNI ANVERSO -->
 			<div class="text-center">
 				<label for="foto_dni_anverso" class="fs-6 fw-mute fw-light fst-italic">
@@ -177,13 +183,24 @@ Inicio
 					<?php endforeach; ?>
 				</select>
 			</div>
+
+			<div>
+				<label for="forma_de_pago" class="fs-6 fw-mute fw-light fst-italic"><small>Forma de
+						pago</small></label>
+				<?php $formaSel = old('forma_de_pago', $socio->forma_de_pago ?? ''); ?>
+				<select name="forma_de_pago" id="forma_de_pago" class="form-select" style="font-size: .9rem;">
+					<?php foreach ($formas as $forma => $valor): ?>
+					<option value="<?= $forma ?>" <?= $formaSel === $forma ? 'selected' : '' ?>><?= $valor ?></option>
+					<?php endforeach; ?>
+				</select>
+			</div>
 		</div>
 	</div>
 	<?php if(session('usuario_nivel') != "user"): ?>
 	<!-- Datos Bancarios -->
 	<div class="mt-3 fs-5 fw-mute fw-light fst-italic">Datos de gestión Bancaria</div>
 	<div class="card px-2 py-1">
-		<div class="d-grid mb-3" style="grid-template-columns: 1fr 1fr; gap: 1ch;">
+		<div class="d-grid mb-3" style="grid-template-columns: 2fr 2fr; gap: 1ch;">
 			<div>
 				<label for="entidad_bancaria" class="fs-6 fw-mute fw-light fst-italic"><small>Entidad
 						Bancaria</small></label>
@@ -191,23 +208,33 @@ Inicio
 					value="<?= old('entidad_bancaria', $socio->entidad_bancaria ?? '') ?>">
 			</div>
 			<div>
-				<label for="cuenta_bancaria" class="form-label fs-6 fw-light fst-italic">
+				<label for="iban" class="fs-6 fw-mute fw-light fst-italic">
 					<small>Número de Cuenta Bancaria</small>
 				</label>
-				<input type="text" name="cuenta_bancaria" id="cuenta_bancaria" class="form-control"
+				<input type="text" name="iban" id="iban" class="form-control"
 					pattern="[A-Z]{2}[0-9]{2} [0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}" maxlength="29"
-					placeholder="ES00 0000 0000 0000 0000 0000"
-					value="<?= old('cuenta_bancaria', $socio->cuenta_bancaria ?? '') ?>" required>
-				<div class="form-label fs-6 fw-light fst-italic"><small>Introduce el IBAN en formato español
+					placeholder="ES00 0000 0000 0000 0000 0000" value="<?= old('iban', $socio->iban ?? '') ?>" required>
+				<div class="fs-6 fw-mute fw-light fst-italic"><small>Introduce el IBAN en formato español
 						(ES00...)</small></div>
 			</div>
 		</div>
-		<div class="d-grid mb-3" style="grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 1ch;">
+		<!-- Nuevos campos SEPA -->
+		<div class="d-grid mb-3" style="grid-template-columns: 2fr 1fr; gap: 1ch;">
 			<div>
-				<label for="cuota_anual" class="fs-6 fw-mute fw-light fst-italic"><small>Cuota Anual</small></label>
-				<input type="text" name="cuota_anual" id="cuota_anual" class="form-control"
-					value="<?= old('cuota_anual', $socio->cuota_anual ?? '') ?>">
+				<label for="mandato" class="fs-6 fw-mute fw-light fst-italic"><small>Mandato SEPA</small></label>
+				<input type="text" name="mandato" id="mandato" class="form-control"
+					value="<?= old('mandato', $socio->mandato ?? '') ?>"
+					placeholder="Ej: MANDATO-<?= date('Y') ?>-#####">
 			</div>
+			<div>
+				<label for="fecha_mandato" class="fs-6 fw-mute fw-light fst-italic"><small>Fecha Mandato</small></label>
+				<input type="date" name="fecha_mandato" id="fecha_mandato" class="form-control"
+					style="font-size: .9rem;"
+					value="<?= old('fecha_mandato', $socio->fecha_mandato ?? date('Y-m-d')) ?>">
+			</div>
+		</div>
+		<!-- Fin nuevos campos -->
+		<div class="d-grid mb-3" style="grid-template-columns: 1fr 2fr 1fr 1fr; gap: 1ch;">
 			<div>
 				<label for="complemento" class="fs-6 fw-mute fw-light fst-italic"><small>Complemento
 						Voluntario</small></label>
@@ -229,13 +256,13 @@ Inicio
 				<label for="ultimo_recibo_fecha" class="fs-6 fw-mute fw-light fst-italic"><small>Último Recibo
 						Fecha</small></label>
 				<input type="date" disabled name="ultimo_recibo_fecha" id="ultimo_recibo_fecha" class="form-control"
-					value="<?= old('ultimo_recibo_fecha', $socio->ultimo_recibo_fecha ?? '') ?>">
+					value="<?= $ultimoRecibo->fecha ?? '' ?>">
 			</div>
 			<div>
 				<label for="ultimo_recibo_importe" class="fs-6 fw-mute fw-light fst-italic"><small>Último Recibo
 						Importe</small></label>
 				<input type="text" disabled name="ultimo_recibo_importe" id="ultimo_recibo_importe" class="form-control"
-					value="<?= old('ultimo_recibo_importe', $socio->ultimo_recibo_importe ?? '') ?>">
+					value="<?= $ultimoRecibo->importe ?? '' ?>">
 			</div>
 		</div>
 
@@ -247,6 +274,7 @@ Inicio
 		<a href="<?= site_url('socios') ?>" class="btn btn-sm btn-info bi-box-arrow-left"> Volver</a>
 	</div>
 </form>
+
 
 <script>
 function previewImage(event, previewId, btnCancelarId) {
@@ -299,7 +327,7 @@ function cancelarSeleccion(inputId, previewId, btnCancelarId, checkboxBorrarId) 
 </script>
 <script>
 (function() {
-	const input = document.getElementById('cuenta_bancaria');
+	const input = document.getElementById('iban');
 
 	function formatIBAN(value) {
 		// Mayúsculas y solo A-Z/0-9

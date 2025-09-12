@@ -12,16 +12,41 @@ class SociosModel extends Model
     protected $returnType       = 'object'; //'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = [
-                'nombre', 'tipo', 'observaciones',
-                'direccion', 'codpostal', 'poblacion', 'provincia',
-                'telefono','email', 'tipo_documentoId', 'documentoId', 'fecha_nacimiento',
-                'foto_dni_anverso', 'foto_dni_reverso',
-                'entidad_bancaria', 'cuenta_bancaria', 'cuota_anual', 'complemento',
-                'modalidad_pago', 'ultimo_recibo_fecha', 'ultimo_recibo_importe',
-                'created_at', 'created_by', 'updated_at', 'updated_by',
-                ];
+    protected $allowedFields = [
+        // Datos personales
+        'nombre',
+        'tipo',
+        'forma_de_pago',
+        'observaciones',
+        'direccion',
+        'codpostal',
+        'poblacion',
+        'provincia',
+        'telefono',
+        'email',
+        'tipo_documentoId',
+        'documentoId',
+        'fecha_nacimiento',
+        'fecha_alta',
 
+        // Fotos DNI
+        'foto_dni_anverso',
+        'foto_dni_reverso',
+
+        // Datos bancarios
+        'entidad_bancaria',
+        'swifth_bic',
+        'iban',
+        'mandato',
+        'fecha_mandato',
+        'complemento',
+        'modalidad_pago',
+
+        // Operador que crea o edita
+        'created_by',
+        'updated_by',
+    ];
+    
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 
@@ -43,12 +68,25 @@ class SociosModel extends Model
 
     // Callbacks
     protected $allowCallbacks = true;
-    protected $beforeInsert   = [];
+    protected $beforeInsert   = ['setCreatedBy'];
     protected $afterInsert    = [];
-    protected $beforeUpdate   = [];
+    protected $beforeUpdate   = ['setUpdatedBy'];
     protected $afterUpdate    = [];
     protected $beforeFind     = [];
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    protected function setCreatedBy(array $data)
+    {
+        $data['data']['created_by'] = session()->get('usuario_nombre') ?? null;
+        $data['data']['updated_by'] = session()->get('usuario_nombre') ?? null;
+        return $data;
+    }
+
+    protected function setUpdatedBy(array $data)
+    {
+        $data['data']['updated_by'] = session()->get('usuario_nombre') ?? null;
+        return $data;
+    }
 }

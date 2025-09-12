@@ -91,7 +91,7 @@ Inicio
 			</p>
 		</div>
 	</div>
-	<div class="d-grid mb-3" style="grid-template-columns: 1fr 1fr 1fr; gap: 1ch;">
+	<div class="d-grid mb-3" style="grid-template-columns: 2fr 2fr 1fr 1fr; gap: 1ch;">
 		<div class="text-center">
 			<label for="foto_dni_anverso" class="fs-6 fw-mute fw-light fst-italic">
 				<small>Foto DNI (anverso)</small>
@@ -122,6 +122,13 @@ Inicio
 			<label for="tipo" class="fs-6 fw-mute fw-light fst-italic"><small>Tipo de socio</small></label>
 			<p class="form-control">
 				<?= !empty($socio->tipo) ? $tipos[$socio->tipo] : 'No definido' ?>
+			</p>
+		</div>
+
+		<div>
+			<label for="forma_de_pago" class="fs-6 fw-mute fw-light fst-italic"><small>Forma de Pago</small></label>
+			<p class="form-control">
+				<?= !empty($socio->forma_de_pago) ? $formas[$socio->forma_de_pago] : 'No definido' ?>
 			</p>
 		</div>
 	</div>
@@ -176,14 +183,14 @@ Inicio
 			<label for="ultimo_recibo_importe" class="fs-6 fw-mute fw-light fst-italic"><small>Último recibo
 					(importe)</small></label>
 			<p class="form-control">
-				<?= !empty($socio->ultimo_recibo_importe) ? $socio->ultimo_recibo_importe : 0 ?>
+				<?= !$ultimoRecibo ? 'Ningún recibo emitido' : $ultimoRecibo->importe ?>
 			</p>
 		</div>
 		<div>
 			<label for="ultimo_recibo_fecha" class="fs-6 fw-mute fw-light fst-italic"><small>Fecha de
 					último recibo</small></label>
 			<p class="form-control">
-				<?= !empty($socio->ultimo_recibo_fecha) ? date('d-m-Y', strtotime($socio->ultimo_recibo_fecha)) : 'Ningún recibo emitido' ?>
+				<?= !$ultimoRecibo ? 'Ningún recibo emitido' : date('d-m-Y', strtotime($ultimoRecibo->fecha)) ?>
 			</p>
 		</div>
 

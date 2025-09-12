@@ -19,7 +19,7 @@
 			<div class="container-fluid d-flex justify-content-between align-items-center">
 				<button class="btn btn-dark d-lg-none" type="button" data-bs-toggle="offcanvas"
 					data-bs-target="#sidebar" aria-controls="sidebar">☰</button>
-				<span id="protectora">Mi Protectora</span>
+				<span id="protectora"><?=session('prote_nombre_corto')?></span>
 				<div class="d-flex align-items-center">
 					<small id="user" class="text-white me-3">Bienvenido,
 						<?= esc(session()->get('usuario_nombre')) ?>
@@ -32,8 +32,14 @@
 		<!-- SIDEBAR OFFCANVAS -->
 		<aside id="sidebar" class="offcanvas offcanvas-start bg-light p-3 border-end" tabindex="-1">
 			<div class="logo-container text-center mb-1">
-				<img src="<?= base_url('images/logoGatos150.png') ?>" alt="Logo" class="img-fluid w-100"
+
+				<?php if(file_exists(FCPATH.'imagenes/protectora/'.session()->get('prote_logo'))):?>
+				<img src="<?= base_url('imagenes/protectora/' . session()->get('prote_logo')) ?>" alt="Logo"
+					class="img-fluid w-100" style="height: auto; max-width:150px">
+				<?php else: ?>
+				<img src="<?= base_url('images/SinLogo.png') ?>" alt="Logo" class="img-fluid w-100"
 					style="height: auto;">
+				<?php endif; ?>
 			</div>
 
 			<div class="offcanvas-header d-lg-none">
@@ -63,18 +69,37 @@
 						<div class="nav-link p-0 m-0" style="line-height: 1;" data-bs-dismiss="offcanvas">
 							<hr class="m-1 border-danger">
 						</div>
+						<a class="nav-link text-danger" href="<?=base_url('protectora')?>"
+							data-bs-dismiss="offcanvas">La Protectora</a>
 						<a class="nav-link text-danger" href="<?=base_url('usuarios')?>"
 							data-bs-dismiss="offcanvas">Usuarios</a>
 						<?php endif; ?>
 					</div>
 					<span class="text"></span>
 
-					<!-- Gestiones -->
-					<a class="nav-link" data-bs-toggle="collapse" href="#menuGestiones" role="button"
-						aria-expanded="false" aria-controls="menuGestiones">Reservas</a>
-					<div class="collapse ps-3" id="menuGestiones">
+					<!-- Reservas -->
+					<a class="nav-link" data-bs-toggle="collapse" href="#menuReservas" role="button"
+						aria-expanded="false" aria-controls="menuReservas">Reservas</a>
+					<div class="collapse ps-3" id="menuReservas">
 						<a class="nav-link" href="#" data-bs-dismiss="offcanvas">Veterinarios</a>
 						<a class="nav-link" href="#" data-bs-dismiss="offcanvas">Accesorios</a>
+					</div>
+
+					<!-- Gestiones -->
+					<a class="nav-link" data-bs-toggle="collapse" href="#menuGestiones" role="button"
+						aria-expanded="false" aria-controls="menuGestiones">Gestiones</a>
+					<div class="collapse ps-3" id="menuGestiones">
+						<a class="nav-link" href="<?=base_url('remesas/listadoRemesas')?>"
+							data-bs-dismiss="offcanvas">Ver
+							Remesas</a>
+						<!-- Restringidos -->
+						<?php if (session('is_loged') && session('usuario_nivel') !== 'user'): ?>
+						<div class="nav-link p-0 m-0" style="line-height: 1;" data-bs-dismiss="offcanvas">
+							<hr class="m-1 border-danger">
+						</div>
+						<a class="nav-link text-danger" href="<?=base_url('buscarNuevosRecibos')?>"
+							data-bs-dismiss="offcanvas">Nuevos Recibos</a>
+						<?php endif; ?>
 					</div>
 
 					<!-- Reportes -->

@@ -6,12 +6,14 @@ use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 
 use App\Models\UsuariosModel;
+use App\Models\ProtectorasModel;
 
 class LoginController extends BaseController
 {
     
     protected $helpers = ['form'];
     public $usuariosModel;
+    public $protectorasModel;
     
     public function __construct()
     {
@@ -26,6 +28,16 @@ class LoginController extends BaseController
                 'estado' => 'activo',
                 'nivel' => 'super']);
         }
+        $this->protectorasModel = new ProtectorasModel();
+        $protectora = $this->protectorasModel->first();
+        session('protectora', $protectora);
+        session()->set('prote_nombre', $protectora->nombre);
+        session()->set('prote_nombre_corto', $protectora->nombre_corto);
+        session()->set('prote_logo', $protectora->logo);
+        session()->set('prote_iban', $protectora->iban);
+        session()->set('prote_bic', $protectora->swifth_bic);
+        session()->set('prote_cuota_anual', $protectora->cuota_anual);
+        session()->set('prote_dia_remesa', $protectora->dia_remesa);
     }
 
     public function index()

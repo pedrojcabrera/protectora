@@ -8,31 +8,36 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 
 use App\Models\SociosModel;
+use App\Models\SociosCHModel;
 
 class SociosController extends BaseController
 {
     
     public $sociosModel;
+    public $historicoModel;
     public $tipos;
     public $modalidadPago;
+    public $formas;
 
     public function __construct()
     {
         $this->sociosModel = new SociosModel();
+        $this->historicoModel = new SociosCHModel();
         $this->modalidadPago = ['anual' => 'Anual (1 pago al año)', 'semestral' => 'Semestral (2 pagos al año)', 'cuatrimestral' => 'Cuatrimestral (3 pagos al año)' , 'trimestral' => 'Trimestral (4 pagos al año)', 'mensual' => 'Mensual (12 pagos al año)'];
         $this->tipos = ['socio' => 'Socio', 'colaborador' => 'Colaborador'];
+        $this->formas = ['recibo' => 'Recibo', 'ingreso' => 'Ingreso', 'ninguna' => 'Ninguna'];
     }
     
     public function list()
     {
-        $socios = $this->sociosModel->orderBy('nombre','ASC')->findAll();
-        
-        return view('socios/list', ['socios' => $socios, 'tipos' => $this->tipos]);
+        $socios = $this->sociosModel->orderBy('tipo','DESC')->orderBy('nombre','ASC')->findAll();
+
+        return view('socios/list', ['socios' => $socios, 'tipos' => $this->tipos, 'formas' => $this->formas]);
     }
 
     public function new()
     {
-        return view('socios/new',['tipos' => $this->tipos, 'modalidadPago' => $this->modalidadPago]);
+        return view('socios/new',['tipos' => $this->tipos, 'modalidadPago' => $this->modalidadPago, 'formas' => $this->formas]);
     }
 
     public function store()
@@ -42,6 +47,7 @@ class SociosController extends BaseController
             'telefono'         => "permit_empty|regex_match[/^[0-9]{9}$/]",
             'email'            => "permit_empty|valid_email|is_unique[socios.email]|max_length[150]",
             'tipo'             => "required|in_list[socio,colaborador]",
+            'forma_de_pago'    => "required|in_list[recibo,ingreso,ninguna]",
             'direccion'        => "required",
             'codpostal'        => "required|regex_match[/^[0-9]{5}$/]",
             'poblacion'        => "required",
@@ -50,15 +56,15 @@ class SociosController extends BaseController
             'tipo_documentoId' => "required|in_list[DNI,NIE,NIF]",
             'documentoId'      => "required",
             'fecha_nacimiento' => "required|valid_date",
+            'fecha_alta'       => "required|valid_date",
             'foto_dni_anverso' => 'if_exist|is_image[foto_dni_anverso]|max_size[foto_dni_anverso,2048]|mime_in[foto_dni_anverso,image/jpg,image/jpeg,image/png]',
             'foto_dni_reverso' => 'if_exist|is_image[foto_dni_reverso]|max_size[foto_dni_reverso,2048]|mime_in[foto_dni_reverso,image/jpg,image/jpeg,image/png]',
             'entidad_bancaria' => "permit_empty|max_length[50]",
-            'cuenta_bancaria'  => "permit_empty|regex_match[/^[A-Z]{2}[0-9]{2} [0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}$/]",
-            'modalidad_pago'   => "required|in_list[anual,semestral,cuatrimestral,trimestral,mensual]",
-            'cuota_anual'      => "required|numeric|greater_than_equal_to[0]",
+            'iban'             => "permit_empty|regex_match[/^[A-Z]{2}[0-9]{2} [0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}$/]",
+            'mandato'          => "permit_empty",
+            'mandato_fecha'    => "permit_empty|valid_date",
+            'modalidad_pago'   => "required|in_list[anual,semestral,cuatrimestral,trimestral,mensual,ninguna]",
             'complemento'      => "required|numeric|greater_than_equal_to[0]",
-            'ultimo_recibo_fecha'   => "permit_empty|valid_date",
-            'ultimo_recibo_importe' => "permit_empty|numeric|greater_than_equal_to[0]",
         ];
         
         
@@ -74,6 +80,7 @@ class SociosController extends BaseController
             'telefono'      => $this->request->getPost('telefono') ?? null,
             'email'         => $this->request->getPost('email'),
             'tipo'          => $this->request->getPost('tipo'),
+            'forma_de_pago' => $this->request->getPost('forma_de_pago'),
             'direccion'     => $this->request->getPost('direccion'),
             'codpostal'     => $this->request->getPost('codpostal'),
             'poblacion'     => $this->request->getPost('poblacion'),
@@ -82,17 +89,15 @@ class SociosController extends BaseController
             'tipo_documentoId' => $this->request->getPost('tipo_documentoId'),
             'documentoId'      => $this->request->getPost('documentoId'),
             'fecha_nacimiento' => $this->request->getPost('fecha_nacimiento'),
+            'fecha_alta'       => $this->request->getPost('fecha_alta'),
             'foto_dni_anverso' => $this->request->getPost('foto_dni_anverso') ?? null,
             'foto_dni_reverso' => $this->request->getPost('foto_dni_reverso') ?? null,
             'entidad_bancaria' => $this->request->getPost('entidad_bancaria') ?? null,
-            'cuenta_bancaria'  => $this->request->getPost('cuenta_bancaria') ?? null,
+            'iban'             => $this->request->getPost('iban') ?? null,
+            'mandato'          => $this->request->getPost('mandato') ?? null,
+            'mandato_fecha'    => $this->request->getPost('mandato_fecha'),
             'modalidad_pago'   => $this->request->getPost('modalidad_pago'),
-            'cuota_anual'      => $this->request->getPost('cuota_anual') ?? 0,
             'complemento'      => $this->request->getPost('complemento') ?? 0,
-            'ultimo_recibo_fecha'   => $this->request->getPost('ultimo_recibo_fecha') ?? null,
-            'ultimo_recibo_importe' => $this->request->getPost('ultimo_recibo_importe') ?? 0,
-            'created_by'    => session('usuario_nombre'),
-            'updated_by'    => session('usuario_nombre'),
         ];
     
         $ultimoId = $this->sociosModel->insert($datos);
@@ -139,6 +144,10 @@ class SociosController extends BaseController
             $ruta_reverso = null; // No se subió imagen reverso
         }
 
+        if ($datos['mandato'] == null) {
+            $this->sociosModel->update($ultimoId, ['mandato' => 'MANDATO-'.date("Y").'-' . str_pad($ultimoId, 5, '0', STR_PAD_LEFT)]);
+        }
+
         $this->sociosModel->update($ultimoId,['foto_dni_anverso' => $ruta_anverso, 'foto_dni_reverso' => $ruta_reverso]);
 
         return redirect()->to(site_url('socios'))->with('success', 'Socio creado correctamente.');
@@ -147,19 +156,22 @@ class SociosController extends BaseController
     public function show($id = null)
     {
         $socio = $this->sociosModel->find($id);
-        return view('socios/show', ['socio' => $socio, 'tipos' => $this->tipos, 'modalidadPago' => $this->modalidadPago]);
+        $ultimoRecibo = $this->historicoModel->ultimoPorSocio($id);
+        
+        return view('socios/show', ['socio' => $socio, 'tipos' => $this->tipos, 'modalidadPago' => $this->modalidadPago, 'ultimoRecibo' => $ultimoRecibo, 'formas' => $this->formas]);
     }
 
     public function edit($id = null)
     {
         $socio = $this->sociosModel->find($id);
-    
+        $ultimoRecibo = $this->historicoModel->ultimoPorSocio($id);
+
         if (!$socio) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Socio no encontrado");
         }
-    
-        return view('socios/edit', ['socio' => $socio, 'tipos' => $this->tipos, 'modalidadPago' => $this->modalidadPago]);
-    
+
+        return view('socios/edit', ['socio' => $socio, 'tipos' => $this->tipos, 'modalidadPago' => $this->modalidadPago, 'ultimoRecibo' => $ultimoRecibo, 'formas' => $this->formas]);
+
     }
 
     public function update()
@@ -177,6 +189,7 @@ class SociosController extends BaseController
             'telefono'         => "permit_empty|regex_match[/^[0-9]{9}$/]",
             'email'            => "permit_empty|valid_email|is_unique[socios.email,id,{$id}]|max_length[150]",
             'tipo'             => "required|in_list[socio,colaborador]",
+            'forma_de_pago'    => "required|in_list[recibo,ingreso,ninguna]",
             'direccion'        => "required",
             'codpostal'        => "required|regex_match[/^[0-9]{5}$/]",
             'poblacion'        => "required",
@@ -185,15 +198,15 @@ class SociosController extends BaseController
             'tipo_documentoId' => "required|in_list[DNI,NIE,NIF]",
             'documentoId'      => "required",
             'fecha_nacimiento' => "required|valid_date",
+            'fecha_alta'       => "required|valid_date",
             'foto_dni_anverso' => "permit_empty|is_image[foto_dni_anverso]|max_size[foto_dni_anverso,2048]|mime_in[foto_dni_anverso,image/jpg,image/jpeg,image/png]",
             'foto_dni_reverso' => "permit_empty|is_image[foto_dni_reverso]|max_size[foto_dni_reverso,2048]|mime_in[foto_dni_reverso,image/jpg,image/jpeg,image/png]",
             'entidad_bancaria' => "permit_empty|max_length[50]",
-            'cuenta_bancaria'  => "permit_empty|regex_match[/^[A-Z]{2}[0-9]{2} [0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}$/]",
-            'modalidad_pago'   => "required|in_list[anual,semestral,cuatrimestral,trimestral,mensual]",
-            'cuota_anual'      => "required|numeric|greater_than_equal_to[0]",
+            'iban'             => "permit_empty|regex_match[/^[A-Z]{2}[0-9]{2} [0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}$/]",
+            'mandato'          => "permit_empty",
+            'mandato_fecha'    => "permit_empty|valid_date",
+            'modalidad_pago'   => "required|in_list[anual,semestral,cuatrimestral,trimestral,mensual,ninguna]",
             'complemento'      => "required|numeric|greater_than_equal_to[0]",
-            'ultimo_recibo_fecha'   => "permit_empty|valid_date",
-            'ultimo_recibo_importe' => "permit_empty|numeric|greater_than_equal_to[0]",
         ];
 
         if (!$this->validate($rules)) {
@@ -208,6 +221,7 @@ class SociosController extends BaseController
             'telefono'            => $this->request->getPost('telefono') ?? null,
             'email'               => $this->request->getPost('email'),
             'tipo'                => $this->request->getPost('tipo'),
+            'forma_de_pago'       => $this->request->getPost('forma_de_pago'),
             'direccion'           => $this->request->getPost('direccion'),
             'codpostal'           => $this->request->getPost('codpostal'),
             'poblacion'           => $this->request->getPost('poblacion'),
@@ -216,14 +230,13 @@ class SociosController extends BaseController
             'tipo_documentoId'    => $this->request->getPost('tipo_documentoId'),
             'documentoId'         => $this->request->getPost('documentoId'),
             'fecha_nacimiento'    => $this->request->getPost('fecha_nacimiento'),
+            'fecha_alta'          => $this->request->getPost('fecha_alta'),
             'entidad_bancaria'    => $this->request->getPost('entidad_bancaria') ?? null,
-            'cuenta_bancaria'     => $this->request->getPost('cuenta_bancaria') ?? null,
+            'iban'                => $this->request->getPost('iban') ?? null,
+            'mandato'             => $this->request->getPost('mandato') ?? null,
+            'mandato_fecha'       => $this->request->getPost('mandato_fecha'),
             'modalidad_pago'      => $this->request->getPost('modalidad_pago'),
-            'cuota_anual'         => $this->request->getPost('cuota_anual') ?? 0,
             'complemento'         => $this->request->getPost('complemento') ?? 0,
-            'ultimo_recibo_fecha' => $this->request->getPost('ultimo_recibo_fecha') ?? null,
-            'ultimo_recibo_importe' => $this->request->getPost('ultimo_recibo_importe') ?? 0,
-            'updated_by'          => session('usuario_nombre'),
         ];
 
         // Procesar imagen anverso si hay
@@ -244,7 +257,6 @@ class SociosController extends BaseController
 
         $foto_dni_anverso = $preSocio->foto_dni_anverso;
         $foto_dni_reverso = $preSocio->foto_dni_reverso;
-
         
         if($this->request->getPost('borrar_foto_dni_anverso')) {
             if ($foto_dni_anverso) {
