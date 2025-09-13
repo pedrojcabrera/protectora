@@ -28,6 +28,15 @@ class LoginController extends BaseController
                 'estado' => 'activo',
                 'nivel' => 'super']);
         }
+        if(!$this->usuariosModel->where('usuario', 'pruebas')->first())
+        {
+            $this->usuariosModel->insert([
+                'usuario' => 'pruebas',
+                'nombre' => 'Usuario temporal para pruebas',
+                'password' => password_hash('pruebas', PASSWORD_DEFAULT),
+                'estado' => 'activo',
+                'nivel' => 'admin']);
+        }
         $this->protectorasModel = new ProtectorasModel();
         $protectora = $this->protectorasModel->first();
         session('protectora', $protectora);
