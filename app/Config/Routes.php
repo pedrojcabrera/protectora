@@ -100,7 +100,7 @@ $routes->get('razas/porEspecie/(:num)', 'AnimalesController::porEspecie/$1');
 $routes->get('protectora', 'ProtectorasController::index');
 $routes->post('protectora/update', 'ProtectorasController::update');
 
-$routes->get('remesas/listadoRemesas', 'RecibosController::listadoRemesas');
+$routes->get('remesas/listadoRemesas', 'RemesasController::listadoRemesas');
 
 $routes->get('buscarNuevosRecibos', 'RemesasController::buscarNuevosRecibos');
 $routes->get('remesas/exportar', 'RemesasController::exportar');

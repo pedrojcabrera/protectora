@@ -28,7 +28,8 @@
 			<button class="accordion-button <?= $index > 0 ? 'collapsed' : '' ?>" type="button"
 				data-bs-toggle="collapse" data-bs-target="#collapse<?= $index ?>"
 				aria-expanded="<?= $index === 0 ? 'true' : 'false' ?>" aria-controls="collapse<?= $index ?>">
-				<?= date('d/m/Y', strtotime($remesa->fecha_cobro)) ?>
+				<?= esc($remesa->remesa) ?>
+				&nbsp; | &nbsp; <?= date('d/m/Y', strtotime($remesa->fecha_cobro)) ?>
 				&nbsp; | &nbsp; <?= $remesa->num_recibos ?> recibos
 				&nbsp; | &nbsp; Total: <?= number_format($remesa->total, 2, ',', '.') ?> €
 			</button>

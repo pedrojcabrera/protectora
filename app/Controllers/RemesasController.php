@@ -25,9 +25,12 @@ class RemesasController extends BaseController
         $this->recibosModel = new RecibosModel();
         $this->remesasModel = new RemesasModel();
     }
-
+    
     public function BuscarNuevosRecibos()
     {
+        // if(session()->usuario_usuario === null || !session()->usuario_usuario){ 
+        //     return view('login');
+        // }
         $cuotaAnual   = session()->get('prote_cuota_anual');
         $diaRemesa    = session()->get('prote_dia_remesa'); 
         $hoy          = new DateTime();
@@ -82,7 +85,10 @@ class RemesasController extends BaseController
             $id_remesa_ingresos =  $this->remesasModel->getInsertID();
         }
 
-        $socios = $this->sociosModel->where('tipo', 'socio')->where('tipo !=', 'ninguno')->findAll();
+        $socios = $this->sociosModel
+                    ->where('tipo', 'socio')
+                    ->where('tipo !=', 'ninguno')
+                    ->findAll();
         $recibosGenerados = [];
 
         foreach ($socios as $socio) {
@@ -208,7 +214,10 @@ class RemesasController extends BaseController
         $sociosModel  = new SociosModel();
 
         // 1. Obtener recibos pendientes
-        $recibos = $recibosModel->where('estado', 'pendiente')->findAll();
+        $recibos = $recibosModel
+                    ->where('estado', 'pendiente')
+                    ->where('tipo', 'recibo')
+                    ->findAll();
 
         if (empty($recibos)) {
             return redirect()->back()->with('mensaje', 'No hay recibos pendientes para exportar');
@@ -314,7 +323,35 @@ class RemesasController extends BaseController
             ->setHeader('Content-Disposition', 'attachment; filename="remesa_' . date('Ymd_His') . '.xml"')
             ->setBody($xmlOutput);
             
-        return redirect()->to('remesas');
+        return redirect()->to('remesas/buscaNuevos');
     }
+    
+    public function listadoRemesas()
+    {
+        $db = \Config\Database::connect();
 
+        // Obtener resumen de remesas
+        $sql = "
+            SELECT r.remesa,
+                   r.fecha_cobro,
+                   COUNT(r.id) AS num_recibos,
+                   SUM(r.importe) AS total
+            FROM recibos r
+            GROUP BY r.fecha_cobro,r.remesa
+            ORDER BY r.fecha_cobro, r.remesa DESC
+        ";
+
+        $remesas = $db->query($sql)->getResult();
+
+        // Añadir detalles a cada remesa
+        foreach ($remesas as &$remesa) {
+            $remesa->detalles = $this->recibosModel
+                ->select('recibos.remesa, recibos.fecha_cobro, recibos.importe, recibos.estado, socios.nombre')
+                ->join('socios', 'socios.id = recibos.socio_id', 'left')
+                ->where('recibos.remesa', $remesa->remesa)
+                ->findAll();
+        }
+
+        return view('remesas/listadoRemesas', ['remesas' => $remesas]);
+    }
 }
