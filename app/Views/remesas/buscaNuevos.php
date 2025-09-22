@@ -34,8 +34,12 @@
 
 <div class="mt-3 botonera-fija">
 	<?php if($remesa_bancaria->estado === 'pendiente'): ?>
-	<a href="<?= site_url('remesas/exportar') ?>" class="btn btn-sm btn-success">
+	<a href="<?= site_url('remesas/exportar') ?>" class="btn btn-sm btn-success mb-1">
 		Generar un archivo SEPA XML
+	</a>
+	<br>
+	<a href="<?= site_url('remesas/cartearRBAN') ?>" class="btn btn-sm btn-success">
+		Cartear a los socios con recibos bancarios la proximidad de la remesa
 	</a>
 	<?php else: ?>
 	<div class="alert alert-danger">
@@ -43,8 +47,12 @@
 		<br>
 		Si ya ha enviado el fichero anterior a su banco, no lo envíe de nuevo
 	</div>
-	<a href="<?= site_url('remesas/exportar') ?>" class="btn btn-sm btn-danger">
+	<a href="<?= site_url('remesas/exportar') ?>" class="btn btn-sm btn-danger mb-1">
 		Generar de nuevo un archivo SEPA XML
+	</a>
+	<br>
+	<a href="<?= site_url('remesas/cartearRBAN') ?>" class="btn btn-sm btn-success">
+		Cartear a los socios con recibos bancarios la proximidad de la remesa
 	</a>
 	<?php endif; ?>
 </div>
@@ -82,14 +90,14 @@
 </table>
 <div class="mt-3 botonera-fija">
 	<?php if($remesa_ingresos->estado === 'pendiente'): ?>
-	<a href="<?= site_url('remesas/exportar') ?>" class="btn btn-sm btn-success">
+	<a href="<?= site_url('remesas/exportarICTA') ?>" class="btn btn-sm btn-success">
 		Generar correo recordatorio de ingresos
 	</a>
 	<?php else: ?>
 	<div class="alert alert-danger">
 		Los correos ya han sido emitidos, pero puede ser generados nuevamente.
 	</div>
-	<a href="<?= site_url('remesas/exportar') ?>" class="btn btn-sm btn-danger">
+	<a href="<?= site_url('remesas/exportarICTA') ?>" class="btn btn-sm btn-danger">
 		Generar de nuevo correo recordatorio de ingresos
 	</a>
 	<?php endif; ?>
