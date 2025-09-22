@@ -28,6 +28,30 @@ Write-Host ""
 Write-Host "Subiendo cambios a GitHub..." -ForegroundColor Green
 git push origin main
 
+# Si falla el push normal, preguntar si hacer push forzado
+if ($LASTEXITCODE -ne 0) {
+    Write-Host ""
+    Write-Host "El push normal falló. Esto puede ocurrir si el repositorio remoto tiene cambios diferentes." -ForegroundColor Yellow
+    Write-Host "Opciones:"
+    Write-Host "  S - Hacer push forzado (recomendado si tu desarrollo está más avanzado)"
+    Write-Host "  N - Cancelar y revisar manualmente"
+    Write-Host ""
+    
+    do {
+        $respuesta = Read-Host "¿Hacer push forzado? (S/N)"
+        $respuesta = $respuesta.Trim().ToUpper()
+    } while ($respuesta -ne "S" -and $respuesta -ne "N")
+    
+    if ($respuesta -eq "S") {
+        Write-Host ""
+        Write-Host "Realizando push forzado..." -ForegroundColor Red
+        git push origin main --force
+    } else {
+        Write-Host ""
+        Write-Host "Push cancelado. Revisa los cambios manualmente." -ForegroundColor Yellow
+    }
+}
+
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""
     Write-Host "¡Sincronización completada exitosamente!" -ForegroundColor Yellow
