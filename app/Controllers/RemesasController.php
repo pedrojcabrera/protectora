@@ -354,4 +354,177 @@ class RemesasController extends BaseController
 
         return view('remesas/listadoRemesas', ['remesas' => $remesas]);
     }
+
+    public function cartaAvisoRecibo()
+    {
+
+        $recibosModel = new RecibosModel();
+        $sociosModel  = new SociosModel();
+        $email = \Config\Services::email();
+
+        // 1. Obtener recibos pendientes (igual que en exportar)
+        $recibos = $recibosModel
+                    ->where('estado', 'pendiente')
+                    ->where('tipo', 'recibo')
+                    ->findAll();
+
+        if (empty($recibos)) {
+            return redirect()->back()->with('mensaje', 'No hay recibos pendientes para enviar avisos');
+        }
+
+        // 2. Configurar email
+        $emailConfig = [
+            'protocol'  => 'smtp',
+            'SMTPHost'  => 'smtp.gmail.com', // Cambiar por tu servidor SMTP
+            'SMTPUser'  => session('prote_email'), // Email de la protectora
+            'SMTPPass'  => 'tu_password_smtp', // Configurar en .env
+            'SMTPPort'  => 587,
+            'SMTPCrypto' => 'tls',
+            'mailType'  => 'html',
+            'charset'   => 'utf-8'
+        ];
+        
+        $email->initialize($emailConfig);
+
+        // 3. Contadores para el resumen
+        $enviados = 0;
+        $errores = 0;
+        $erroresList = [];
+
+        // 4. Enviar email a cada socio
+        foreach ($recibos as $recibo) {
+            $socio = $sociosModel->find($recibo->socio_id);
+            
+            if ($socio && !empty($socio->email)) {
+                // Formatear datos
+                $fechaCobro = new DateTime($recibo->fecha_cobro);
+                $importeFormateado = number_format($recibo->importe, 2, ',', '.');
+                
+                // Configurar email
+                $email->setFrom(session('prote_email'), session('prote_nombre'));
+                $email->setTo($socio->email);
+                $email->setSubject('Aviso de cobro de cuota - ' . session('prote_nombre'));
+                
+                // Generar contenido HTML del email
+                $mensaje = $this->generarMensajeEmail([
+                    'nombre' => $socio->nombre,
+                    'importe' => $importeFormateado,
+                    'fecha_cobro' => $fechaCobro->format('d/m/Y'),
+                    'remesa' => $recibo->remesa,
+                    'protectora_nombre' => session('prote_nombre'),
+                    'protectora_telefono' => session('prote_telefono') ?? '',
+                    'protectora_email' => session('prote_email') ?? ''
+                ]);
+                
+                $email->setMessage($mensaje);
+                
+                // Enviar email
+                if ($email->send()) {
+                    $enviados++;
+                } else {
+                    $errores++;
+                    $erroresList[] = [
+                        'socio' => $socio->nombre,
+                        'email' => $socio->email,
+                        'error' => $email->printDebugger(['headers'])
+                    ];
+                }
+                
+                $email->clear(); // Limpiar para el siguiente envío
+            } else {
+                $errores++;
+                $erroresList[] = [
+                    'socio' => $socio ? $socio->nombre : 'Socio no encontrado',
+                    'email' => $socio ? ($socio->email ?? 'Sin email') : 'N/A',
+                    'error' => 'Socio sin email válido'
+                ];
+            }
+        }
+
+        // 5. Mostrar resumen
+        $mensaje = "Avisos de recibo enviados: {$enviados} exitosos, {$errores} errores";
+        
+        if ($errores > 0) {
+            session()->setFlashdata('errores_email', $erroresList);
+        }
+
+        return redirect()->back()->with('mensaje', $mensaje);
+    }
+
+    private function generarMensajeEmail($datos)
+    {
+        return "
+        <!DOCTYPE html>
+        <html lang='es'>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <title>Aviso de Cobro de Cuota</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background-color: #f8f9fa; padding: 20px; border-radius: 5px; text-align: center; margin-bottom: 20px; }
+                .content { background-color: #ffffff; padding: 20px; border: 1px solid #dee2e6; border-radius: 5px; }
+                .destacado { background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 20px 0; }
+                .importe { font-size: 18px; font-weight: bold; color: #dc3545; }
+                .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6; font-size: 14px; color: #6c757d; }
+                table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+                td { padding: 8px; border-bottom: 1px solid #dee2e6; }
+                .label { font-weight: bold; width: 30%; }
+            </style>
+        </head>
+        <body>
+            <div class='header'>
+                <h2>{$datos['protectora_nombre']}</h2>
+                <p>Aviso de Cobro de Cuota</p>
+            </div>
+            
+            <div class='content'>
+                <p><strong>Estimado/a {$datos['nombre']}:</strong></p>
+                
+                <p>Por medio del presente email, le comunicamos que próximamente procederemos al 
+                cobro de su cuota de socio correspondiente.</p>
+                
+                <div class='destacado'>
+                    <h3>📋 Detalles del recibo:</h3>
+                    <table>
+                        <tr>
+                            <td class='label'>💰 Importe:</td>
+                            <td><span class='importe'>{$datos['importe']} €</span></td>
+                        </tr>
+                        <tr>
+                            <td class='label'>📅 Fecha de cobro:</td>
+                            <td><strong>{$datos['fecha_cobro']}</strong></td>
+                        </tr>
+                        <tr>
+                            <td class='label'>📄 Número de remesa:</td>
+                            <td>{$datos['remesa']}</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <p>✅ <strong>Le rogamos se asegure de que su cuenta dispone de saldo suficiente 
+                para la fecha indicada</strong>, evitando así posibles gastos por devolución.</p>
+                
+                <p>🐾 Su colaboración es fundamental para que podamos continuar con nuestra 
+                labor de protección animal. <strong>Gracias por su compromiso y apoyo continuo.</strong></p>
+                
+                <p>Si tiene alguna duda o consulta, no dude en contactarnos.</p>
+            </div>
+            
+            <div class='footer'>
+                <p><strong>Atentamente,</strong><br>
+                <strong>{$datos['protectora_nombre']}</strong></p>
+                
+                <hr style='margin: 15px 0;'>
+                
+                <p style='font-size: 12px;'>
+                    📧 <strong>Email:</strong> {$datos['protectora_email']}<br>
+                    " . (!empty($datos['protectora_telefono']) ? "📞 <strong>Teléfono:</strong> {$datos['protectora_telefono']}<br>" : "") . "
+                    
+                    <br><em>Este es un email automático, por favor no responda directamente a este mensaje.</em>
+                </p>
+            </div>
+        </body>
+        </html>";
+    }
 }

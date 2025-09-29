@@ -45,7 +45,7 @@ class SociosController extends BaseController
         $rules = [
             'nombre'           => "required|min_length[3]|max_length[100]",
             'telefono'         => "permit_empty|regex_match[/^[0-9]{9}$/]",
-            'email'            => "permit_empty|valid_email|is_unique[socios.email]|max_length[150]",
+            'email'            => "permit_empty|valid_email",
             'tipo'             => "required|in_list[socio,colaborador]",
             'forma_de_pago'    => "required|in_list[recibo,ingreso,ninguna]",
             'direccion'        => "required",
@@ -187,7 +187,7 @@ class SociosController extends BaseController
         $rules = [
             'nombre'           => "required|min_length[3]|max_length[100]",
             'telefono'         => "permit_empty|regex_match[/^[0-9]{9}$/]",
-            'email'            => "permit_empty|valid_email|is_unique[socios.email,id,{$id}]|max_length[150]",
+            'email'            => "permit_empty|valid_email",
             'tipo'             => "required|in_list[socio,colaborador]",
             'forma_de_pago'    => "required|in_list[recibo,ingreso,ninguna]",
             'direccion'        => "required",
