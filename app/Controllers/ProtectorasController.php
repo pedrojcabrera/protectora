@@ -36,11 +36,21 @@ class ProtectorasController extends BaseController
                 'swifth_bic'    => '',
                 'cuota_anual'   => 0,
                 'dia_remesa'    => 5,
+                'mail_protocolo' => 'smtp',
+                'mail_servidor' => '',
+                'mail_puerto'   => 465,
+                'mail_usuario'  => '',
+                'mail_password' => '',
+                'mail_encriptacion' => 'ssl',
+                'mail_tipo'     => 'html',
+                'mail_charset'  => 'utf-8',
+                'mail_wordwrap' => true,
+                'mail_newline'  => "\r\n",
             ]);
             $protectora = $this->protectorasModel->find($id);
         }
 
-        return view('protectoras/form', [
+        return view('protectoras/edit', [
             'protectora' => $protectora
         ]);
     }
@@ -67,6 +77,16 @@ class ProtectorasController extends BaseController
             'iban'          => $this->request->getPost('iban'),
             'cuota_anual'   => $this->request->getPost('cuota_anual'),
             'dia_remesa'    => $this->request->getPost('dia_remesa'),
+            'mail_protocolo' => $this->request->getPost('mail_protocolo'),
+            'mail_servidor' => $this->request->getPost('mail_servidor'),
+            'mail_puerto'   => $this->request->getPost('mail_puerto'),
+            'mail_usuario'  => $this->request->getPost('mail_usuario'),
+            'mail_password' => $this->request->getPost('mail_password'),
+            'mail_encriptacion' => $this->request->getPost('mail_encriptacion'),
+            'mail_tipo'     => $this->request->getPost('mail_tipo'),
+            'mail_charset'  => $this->request->getPost('mail_charset'),
+            'mail_wordwrap' => $this->request->getPost('mail_wordwrap'),
+            'mail_newline'  => $this->request->getPost('mail_newline'),
         ];
 
         $file = $this->request->getFile('logo');
@@ -103,6 +123,18 @@ class ProtectorasController extends BaseController
         session()->set('prote_bic', $protectora->swifth_bic);
         session()->set('prote_cuota_anual', $protectora->cuota_anual);
         session()->set('prote_dia_remesa', $protectora->dia_remesa);
+
+        session()->set('prote_mail_protocolo', $protectora->mail_protocolo);
+        session()->set('prote_mail_servidor', $protectora->mail_servidor);
+        session()->set('prote_mail_puerto', $protectora->mail_puerto);
+        session()->set('prote_mail_usuario', $protectora->mail_usuario);
+        session()->set('prote_mail_password', $protectora->mail_password);
+        session()->set('prote_mail_encriptacion', $protectora->mail_encriptacion);
+        session()->set('prote_mail_tipo', $protectora->mail_tipo);
+        session()->set('prote_mail_charset', $protectora->mail_charset);
+        session()->set('prote_mail_wordwrap', $protectora->mail_wordwrap);
+        session()->set('prote_mail_newline', $protectora->mail_newline);
+        
         // Redirigir con mensaje de éxito
         return redirect()->to('/protectora')->with('msg', 'Datos actualizados correctamente');
     }

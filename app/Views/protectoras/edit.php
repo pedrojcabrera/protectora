@@ -124,6 +124,91 @@
 			<!-- Campo hidden que indica al controlador si borrar el logo -->
 			<input type="hidden" name="delete_logo" id="deleteLogo" value="0">
 		</div>
+		<hr>
+		<h4 class="mb-3">Configuración del envío de Correos Electrónicos</h4>
+		<div class="row mb-3">
+			<div class="col-md-2">
+				<label class="fs-6 text-black fw-mute fw-light fst-italic m-0 mt-1"><small>Protocolo</small></label>
+				<select name="mail_protocolo" class="form-control">
+					<option value="mail" <?= ($protectora->mail_protocolo === 'mail') ? 'selected' : '' ?>>mail</option>
+					<option value="sendmail" <?= ($protectora->mail_protocolo === 'sendmail') ? 'selected' : '' ?>>sendmail</option>
+					<option value="smtp" <?= ($protectora->mail_protocolo === 'smtp' || empty($protectora->mail_protocolo)) ? 'selected' : '' ?>>smtp</option>
+				</select>
+			</div>
+			<div class="col-md-6">
+				<label class="fs-6 text-black fw-mute fw-light fst-italic m-0 mt-1"><small>Servidor de
+						Correo</small></label>
+				<input type="text" name="mail_servidor" class="form-control"
+					value="<?= esc($protectora->mail_servidor) ?>">
+				<div class="form-label fs-6 fw-light fst-italic"><small>Ej: smtp.dominio.com</small></div>
+			</div>
+		</div>
+		<div class="row mb-3">
+			<div class="col-md-2">
+				<label class="fs-6 text-black fw-mute fw-light fst-italic m-0 mt-1"><small>Puerto</small></label>
+				<input type="number" name="mail_puerto" class="form-control text-end"
+					value="<?= esc($protectora->mail_puerto) ?>" step="1" min="1">
+				<div class="form-label fs-6 fw-light fst-italic"><small>Ej: 25, 465 (SSL), 587 (TLS)</small></div>
+			</div>
+			<div class="col-md-2">
+				<label class="fs-6 text-black fw-mute fw-light fst-italic m-0 mt-1"><small>Encriptación</small></label>
+				<select name="mail_encriptacion" class="form-control">
+					<option value="ssl" <?= ($protectora->mail_encriptacion === 'ssl' || empty($protectora->mail_encriptacion)) ? 'selected' : '' ?>>ssl</option>
+					<option value="tls" <?= ($protectora->mail_encriptacion === 'tls') ? 'selected' : '' ?>>tls</option>
+				</select>
+				<div class="form-label fs-6 fw-light fst-italic">
+					<small>Ej: ssl o tls</small>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<label class="fs-6 text-black fw-mute fw-light fst-italic m-0 mt-1">
+					<small>Tipo</small>
+				</label>
+				<select name="mail_tipo" class="form-control">
+					<option value="text" <?= ($protectora->mail_tipo === 'text') ? 'selected' : '' ?>>text</option>
+					<option value="html" <?= ($protectora->mail_tipo === 'html' || empty($protectora->mail_tipo)) ? 'selected' : '' ?>>html</option>
+				</select>
+				<div class="form-label fs-6 fw-light fst-italic">
+					<small>Ej: text, html</small>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<label class="fs-6 text-black fw-mute fw-light fst-italic m-0 mt-1"><small>Juego de caracteres</small></label>
+				<input type="text" name="mail_charset" class="form-control"
+					value="<?= esc($protectora->mail_charset) ?>">
+				<div class="form-label fs-6 fw-light fst-italic"><small>Ej: utf-8</small></div>
+			</div>
+			<div class="col-md-2">
+				<label class="fs-6 text-black fw-mute fw-light fst-italic m-0 mt-1">
+					<small>Ajuste de línea</small>
+				</label>
+				<select name="mail_wordwrap" class="form-control">
+					<option value=false <?= ($protectora->mail_wordwrap === false) ? 'selected' : '' ?>>No</option>
+					<option value=true <?= ($protectora->mail_wordwrap === true || empty($protectora->mail_wordwrap)) ? 'selected' : '' ?>>Sí</option>
+				</select>
+				<div class="form-label fs-6 fw-light fst-italic">
+					<small>Ej: En gmail=Sí</small>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<label class="fs-6 text-black fw-mute fw-light fst-italic m-0 mt-1"><small>Nueva línea</small></label>
+				<input type="text" name="mail_newline" class="form-control"
+					value="<?= esc($protectora->mail_newline) ?>">
+				<div class="form-label fs-6 fw-light fst-italic"><small>Ej: /r/n</small></div>
+			</div>
+		</div>
+		<div class="row mb-3">
+			<div class="col-md-5">
+				<label class="fs-6 text-black fw-mute fw-light fst-italic m-0 mt-1"><small>Usuario</small></label>
+				<input type="text" name="mail_usuario" class="form-control"
+					value="<?= esc($protectora->mail_usuario) ?>">
+			</div>
+			<div class="col-md-5">
+				<label class="fs-6 text-black fw-mute fw-light fst-italic m-0 mt-1"><small>Password</small></label>
+				<input type="text" name="mail_password" class="form-control"
+					value="<?= esc($protectora->mail_password) ?>">
+			</div>
+		</div>
 		<div class="mt-3 botonera-fija">
 			<button type="submit" class="btn btn-sm btn-success bi-hand-thumbs-up"> Guardar Cambios</button>
 		</div>

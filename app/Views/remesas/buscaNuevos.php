@@ -1,6 +1,57 @@
 <?= $this->extend('layout') ?>
 <?= $this->section('content') ?>
 
+<?php if (session()->has('errores_email')): ?>
+    <?php $errores = session('errores_email'); ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <h5>Errores al enviar emails:</h5>
+        <table class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>Socio</th>
+                    <th>Email</th>
+                    <th>Error</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($errores as $e): ?>
+                    <tr>
+                        <td><?= esc($e['socio']) ?></td>
+                        <td><?= esc($e['email']) ?></td>
+                        <td><?= esc($e['error']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php endif; ?>
+
+<?php if (session()->has('mensajes')): ?>
+<?php $mensajes = session('mensajes'); ?>
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+	<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	<h4>Resultados del envío de correos:</h4>
+        <table class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>Socio</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($mensajes as $e): ?>
+                    <tr>
+                        <td><?= esc($e['socio']) ?></td>
+                        <td><?= esc($e['email']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+</div>
+<?php endif; ?>
+
+
 
 <?php if(!$remesa_bancaria || $remesa_bancaria === null): ?>
 <h2 class="text-center mt-3">No hay recibos bancarios para el próximo <?= str_replace("-", "/", $fechaRemesa) ?></h2>
@@ -90,14 +141,14 @@
 </table>
 <div class="mt-3 botonera-fija">
 	<?php if($remesa_ingresos->estado === 'pendiente'): ?>
-	<a href="<?= site_url('remesas/exportarICTA') ?>" class="btn btn-sm btn-success">
+	<a href="<?= site_url('remesas/cartearICTA') ?>" class="btn btn-sm btn-success">
 		Generar correo recordatorio de ingresos
 	</a>
 	<?php else: ?>
 	<div class="alert alert-danger">
 		Los correos ya han sido emitidos, pero puede ser generados nuevamente.
 	</div>
-	<a href="<?= site_url('remesas/exportarICTA') ?>" class="btn btn-sm btn-danger">
+	<a href="<?= site_url('remesas/cartearICTA') ?>" class="btn btn-sm btn-danger">
 		Generar de nuevo correo recordatorio de ingresos
 	</a>
 	<?php endif; ?>

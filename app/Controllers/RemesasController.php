@@ -357,54 +357,47 @@ class RemesasController extends BaseController
 
     public function cartaAvisoRecibo()
     {
-
         $recibosModel = new RecibosModel();
         $sociosModel  = new SociosModel();
-        $email = \Config\Services::email();
-
+        
         // 1. Obtener recibos pendientes (igual que en exportar)
         $recibos = $recibosModel
-                    ->where('estado', 'pendiente')
-                    ->where('tipo', 'recibo')
-                    ->findAll();
-
+        ->where('estado', 'pendiente')
+        ->where('tipo', 'recibo')
+        ->findAll();
+        
         if (empty($recibos)) {
             return redirect()->back()->with('mensaje', 'No hay recibos pendientes para enviar avisos');
         }
-
-        // 2. Configurar email
-        $emailConfig = [
-            'protocol'  => 'smtp',
-            'SMTPHost'  => 'smtp.gmail.com', // Cambiar por tu servidor SMTP
-            'SMTPUser'  => session('prote_email'), // Email de la protectora
-            'SMTPPass'  => 'tu_password_smtp', // Configurar en .env
-            'SMTPPort'  => 587,
-            'SMTPCrypto' => 'tls',
-            'mailType'  => 'html',
-            'charset'   => 'utf-8'
-        ];
         
-        $email->initialize($emailConfig);
-
+        // 2. Configurar email
+        
+        $emailConfig = $this->emailConfig();
+        
         // 3. Contadores para el resumen
         $enviados = 0;
         $errores = 0;
         $erroresList = [];
-
+        $mensajes = []; // ← AÑADIDO: Inicializar la variable
+        
         // 4. Enviar email a cada socio
         foreach ($recibos as $recibo) {
             $socio = $sociosModel->find($recibo->socio_id);
-            
             if ($socio && !empty($socio->email)) {
                 // Formatear datos
                 $fechaCobro = new DateTime($recibo->fecha_cobro);
                 $importeFormateado = number_format($recibo->importe, 2, ',', '.');
                 
                 // Configurar email
-                $email->setFrom(session('prote_email'), session('prote_nombre'));
+                $email = \Config\Services::email($emailConfig);
+                //$email->initialize($emailConfig);
+                $email->setFrom(session('prote_mail_usuario'), session('prote_nombre'));
                 $email->setTo($socio->email);
                 $email->setSubject('Aviso de cobro de cuota - ' . session('prote_nombre'));
                 
+                //dd($email);
+
+
                 // Generar contenido HTML del email
                 $mensaje = $this->generarMensajeEmail([
                     'nombre' => $socio->nombre,
@@ -419,8 +412,13 @@ class RemesasController extends BaseController
                 $email->setMessage($mensaje);
                 
                 // Enviar email
+
                 if ($email->send()) {
                     $enviados++;
+                    $mensajes[] = [
+                        'socio' => $socio->nombre,
+                        'email' => $socio->email,
+                    ];
                 } else {
                     $errores++;
                     $erroresList[] = [
@@ -440,14 +438,18 @@ class RemesasController extends BaseController
                 ];
             }
         }
-
-        // 5. Mostrar resumen
-        $mensaje = "Avisos de recibo enviados: {$enviados} exitosos, {$errores} errores";
         
+        // 5. Mostrar resumen
+
         if ($errores > 0) {
             session()->setFlashdata('errores_email', $erroresList);
         }
+        if (isset($mensajes) && count($mensajes) > 0) {
+            session()->setFlashdata('mensajes', $mensajes);
+        }
 
+        $mensaje = "Avisos de recibo enviados: {$enviados} exitosos, {$errores} errores";
+        
         return redirect()->back()->with('mensaje', $mensaje);
     }
 
@@ -527,4 +529,117 @@ class RemesasController extends BaseController
         </body>
         </html>";
     }
+
+    public function cartaAvisoIngreso()
+    {
+        $recibosModel = new RecibosModel();
+        $sociosModel  = new SociosModel();
+        $email = \Config\Services::email();
+        
+        // 1. Obtener recibos pendientes (igual que en exportar)
+        $recibos = $recibosModel
+        ->where('estado', 'pendiente')
+        ->where('tipo', 'ingreso')
+        ->findAll();
+        
+        if (empty($recibos)) {
+            return redirect()->back()->with('mensaje', 'No hay recibos pendientes para enviar avisos');
+        }
+
+        // 2. Configurar email - CORREGIDO
+        $emailConfig = $this->emailConfig();
+        $email->initialize($emailConfig);
+
+        // 3. Contadores para el resumen
+        $enviados = 0;
+        $errores = 0;
+        $erroresList = [];
+        $mensajes = []; // ← AÑADIDO: Inicializar la variable
+
+        // 4. Enviar email a cada socio
+        foreach ($recibos as $recibo) {
+            $socio = $sociosModel->find($recibo->socio_id);
+            if ($socio && !empty($socio->email)) {
+                // Formatear datos
+                $fechaCobro = new DateTime($recibo->fecha_cobro);
+                $importeFormateado = number_format($recibo->importe, 2, ',', '.');
+                
+                // Configurar email
+                $email->setFrom(session('prote_email'), session('prote_nombre'));
+                $email->setTo($socio->email);
+                $email->setSubject('Aviso de cobro de cuota - ' . session('prote_nombre'));
+                
+                // Generar contenido HTML del email
+                $mensaje = $this->generarMensajeEmail([
+                    'nombre' => $socio->nombre,
+                    'importe' => $importeFormateado,
+                    'fecha_cobro' => $fechaCobro->format('d/m/Y'),
+                    'remesa' => $recibo->remesa,
+                    'protectora_nombre' => session('prote_nombre'),
+                    'protectora_telefono' => session('prote_telefono') ?? '',
+                    'protectora_email' => session('prote_email') ?? ''
+                ]);
+                
+                $email->setMessage($mensaje);
+                
+                $mensajes[] = [
+                    'socio' => $socio->nombre,
+                    'email' => $socio->email,
+                    'mensaje' => $mensaje
+                ];
+
+                // Enviar email
+                if ($email->send()) {
+                    $enviados++;
+                } else {
+                    $errores++;
+                    $erroresList[] = [
+                        'socio' => $socio->nombre,
+                        'email' => $socio->email,
+                        'error' => $email->printDebugger(['headers'])
+                    ];
+                }
+                
+                $email->clear(); // Limpiar para el siguiente envío
+            } else {
+                $errores++;
+                $erroresList[] = [
+                    'socio' => $socio ? $socio->nombre : 'Socio no encontrado',
+                    'email' => $socio ? ($socio->email ?? 'Sin email') : 'N/A',
+                    'error' => 'Socio sin email válido'
+                ];
+            }
+        }
+        
+        // 5. Mostrar resumen
+        dd($mensajes);
+
+        if ($errores > 0) {
+            session()->setFlashdata('errores_email', $erroresList);
+        }
+        if (isset($mensajes) && count($mensajes) > 0) {
+            session()->setFlashdata('mensajes', $mensajes);
+        }
+
+        $mensaje = "Avisos de recibo enviados: {$enviados} exitosos, {$errores} errores";
+        
+        return redirect()->back()->with('mensaje', $mensaje);
+    }
+
+    private function emailConfig()
+    {
+            $emailConfig = [
+            'protocol'  => session('prote_mail_protocolo'),
+            'SMTPHost'  => session('prote_mail_servidor'),
+            'SMTPUser'  => session('prote_mail_usuario'),
+            'SMTPPass'  => session('prote_mail_password'),
+            'SMTPPort'  => (int) session('prote_mail_puerto'),
+            'SMTPCrypto'=> session('prote_mail_encriptacion'),
+            'mailType'  => session('prote_mail_tipo'),
+            'charset'   => session('prote_mail_charset'),
+        ];
+        return $emailConfig;
+    }
+
+
 }

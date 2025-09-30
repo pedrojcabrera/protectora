@@ -105,3 +105,4 @@ $routes->get('remesas/listadoRemesas', 'RemesasController::listadoRemesas');
 $routes->get('buscarNuevosRecibos', 'RemesasController::buscarNuevosRecibos');
 $routes->get('remesas/exportar', 'RemesasController::exportar');
 $routes->get('remesas/cartearRBAN', 'RemesasController::cartaAvisoRecibo');
+$routes->get('remesas/cartearICTA', 'RemesasController::cartaAvisoIngreso');

@@ -41,12 +41,22 @@ class LoginController extends BaseController
         $protectora = $this->protectorasModel->first();
         session('protectora', $protectora);
         session()->set('prote_nombre', $protectora->nombre);
+        session()->set('prote_email', $protectora->email);
         session()->set('prote_nombre_corto', $protectora->nombre_corto);
         session()->set('prote_logo', $protectora->logo);
         session()->set('prote_iban', $protectora->iban);
         session()->set('prote_bic', $protectora->swifth_bic);
         session()->set('prote_cuota_anual', $protectora->cuota_anual);
         session()->set('prote_dia_remesa', $protectora->dia_remesa);
+
+        session()->set('prote_mail_protocolo', $protectora->mail_protocolo);
+        session()->set('prote_mail_servidor', $protectora->mail_servidor);
+        session()->set('prote_mail_puerto', $protectora->mail_puerto);
+        session()->set('prote_mail_usuario', $protectora->mail_usuario);
+        session()->set('prote_mail_password', $protectora->mail_password);
+        session()->set('prote_mail_encriptacion', $protectora->mail_encriptacion);
+        session()->set('prote_mail_tipo', $protectora->mail_tipo);
+        session()->set('prote_mail_charset', $protectora->mail_charset);
     }
 
     public function index()

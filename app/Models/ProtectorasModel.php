@@ -29,6 +29,16 @@ class ProtectorasModel extends Model
         'cuota_anual',
         'dia_remesar',
 		'logo',
+        'mail_protocolo',
+        'mail_servidor',
+        'mail_puerto',
+        'mail_usuario',
+        'mail_password',
+        'mail_encriptacion',
+        'mail_tipo',
+        'mail_charset',
+        'mail_wordwrap',
+        'mail_newline',
     ];
 
     // Fechas
